@@ -357,23 +357,22 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
 
   Future<void> _changeCountry() async {
     filteredCountries = _countryList;
-    await showDialog(
+    await showModalBottomSheet(
       context: context,
       useRootNavigator: false,
-      builder: (context) => StatefulBuilder(
-        builder: (ctx, setState) => CountryPickerDialog(
-          languageCode: widget.languageCode.toLowerCase(),
-          style: widget.pickerDialogStyle,
-          filteredCountries: filteredCountries,
-          searchText: widget.searchText,
-          countryList: _countryList,
-          selectedCountry: _selectedCountry,
-          onCountryChanged: (Country country) {
-            _selectedCountry = country;
-            widget.onCountryChanged?.call(country);
-            setState(() {});
-          },
-        ),
+      elevation: 0,
+      builder: (context) => CountryPickerDialog(
+        languageCode: widget.languageCode.toLowerCase(),
+        style: widget.pickerDialogStyle,
+        filteredCountries: filteredCountries,
+        searchText: widget.searchText,
+        countryList: _countryList,
+        selectedCountry: _selectedCountry,
+        onCountryChanged: (Country country) {
+          _selectedCountry = country;
+          widget.onCountryChanged?.call(country);
+          setState(() {});
+        },
       ),
     );
     if (mounted) setState(() {});
@@ -457,46 +456,45 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
           onTap: widget.enabled ? _changeCountry : null,
           child: Padding(
             padding: widget.flagsButtonPadding,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const SizedBox(
-                  width: 4,
-                ),
-                if (widget.enabled &&
-                    widget.showDropdownIcon &&
-                    widget.dropdownIconPosition == IconPosition.leading) ...[
-                  widget.dropdownIcon,
-                  const SizedBox(width: 4),
-                ],
-                if (widget.showCountryFlag) ...[
-                  kIsWeb
-                      ? Image.asset(
-                          'assets/flags/${_selectedCountry.code.toLowerCase()}.png',
-                          package: 'intl_phone_field',
-                          width: 32,
-                        )
-                      : Text(
-                          _selectedCountry.flag,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                  const SizedBox(width: 8),
-                ],
-                FittedBox(
-                  child: Text(
-                    '+${_selectedCountry.dialCode}',
-                    style: widget.dropdownTextStyle,
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  if (widget.enabled &&
+                      widget.showDropdownIcon &&
+                      widget.dropdownIconPosition == IconPosition.leading) ...[
+                    widget.dropdownIcon,
+                  ],
+                  Row(
+                    children: [
+                      Text(
+                        _selectedCountry.dialCode,
+                        style: widget.dropdownTextStyle,
+                        textAlign: TextAlign.left,
+                      ),
+                      const Text("+"),
+                    ],
                   ),
-                ),
-                if (widget.enabled &&
-                    widget.showDropdownIcon &&
-                    widget.dropdownIconPosition == IconPosition.trailing) ...[
-                  const SizedBox(width: 4),
-                  widget.dropdownIcon,
+                  const SizedBox(width: 8),
+                  if (widget.enabled &&
+                      widget.showDropdownIcon &&
+                      widget.dropdownIconPosition == IconPosition.trailing) ...[
+                    const SizedBox(width: 4),
+                    widget.dropdownIcon,
+                  ],
+                  if (widget.showCountryFlag) ...[
+                    Image.asset(
+                      'assets/flags/${_selectedCountry.code.toLowerCase()}.png',
+                      package: 'intl_phone_field',
+                      width: 20,
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                  const SizedBox(width: 10),
                 ],
-                const SizedBox(width: 8),
-              ],
+              ),
             ),
           ),
         ),
