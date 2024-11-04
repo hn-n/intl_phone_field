@@ -45,6 +45,7 @@ class CountryPickerDialog extends StatefulWidget {
   final List<Country> filteredCountries;
   final PickerDialogStyle? style;
   final String languageCode;
+  final Color? dividerColor;
 
   const CountryPickerDialog({
     Key? key,
@@ -55,6 +56,7 @@ class CountryPickerDialog extends StatefulWidget {
     required this.selectedCountry,
     required this.filteredCountries,
     this.style,
+    this.dividerColor,
   }) : super(key: key);
 
   @override
@@ -82,6 +84,46 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
       padding: widget.style?.padding ?? const EdgeInsets.all(10),
       child: Column(
         children: <Widget>[
+          Container(
+            margin: const EdgeInsets.only(
+              top: 10,
+              right: 20,
+              left: 20,
+            ),
+            height: kToolbarHeight + 10,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: 5,
+                  width: 150,
+                  decoration: BoxDecoration(
+                    color: widget.dividerColor ?? Colors.grey,
+                  ),
+                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: <Widget>[
+                //     if (title != null)
+                //       Text(
+                //         title,
+                //         style: TextStyles.t1,
+                //         maxLines: 1,
+                //       )
+                //     else
+                //       const SizedBox(),
+                //     if (showCancelButton)
+                //       Bounce(
+                //         onTap: () => Navigator.pop(context),
+                //         child: const Icon(
+                //           PhosphorIcons.x_bold,
+                //         ),
+                //       )
+                //   ],
+                // ),
+              ],
+            ),
+          ),
           Padding(
             padding: widget.style?.searchFieldPadding ?? const EdgeInsets.all(0),
             child: TextField(
