@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/countries.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
 void main() {
@@ -54,6 +55,9 @@ class _MyAppState extends State<MyApp> {
                   height: 10,
                 ),
                 IntlPhoneField(
+                  countries: [
+                    ...countries.where((element) => ['SA'].contains(element.code))
+                  ],
                   focusNode: focusNode,
                   decoration: InputDecoration(
                     labelText: 'Phone Number',

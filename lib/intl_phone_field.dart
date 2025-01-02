@@ -307,6 +307,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
   late Country _selectedCountry;
   late List<Country> filteredCountries;
   late String number;
+  bool showDialog = true;
 
   String? validatorMessage;
 
@@ -315,6 +316,7 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
     super.initState();
     _countryList = widget.countries ?? countries;
     filteredCountries = _countryList;
+    showDialog = (filteredCountries.length > 1);
     number = widget.initialValue ?? '';
     if (widget.initialCountryCode == null && number.startsWith('+')) {
       number = number.substring(1);
@@ -357,25 +359,27 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
 
   Future<void> _changeCountry() async {
     filteredCountries = _countryList;
-    await showModalBottomSheet(
-      context: context,
-      useRootNavigator: false,
-      elevation: 0,
-      builder: (context) => CountryPickerDialog(
-        languageCode: widget.languageCode.toLowerCase(),
-        style: widget.pickerDialogStyle,
-        filteredCountries: filteredCountries,
-        searchText: widget.searchText,
-        countryList: _countryList,
-        selectedCountry: _selectedCountry,
-        onCountryChanged: (Country country) {
-          _selectedCountry = country;
-          widget.onCountryChanged?.call(country);
-          setState(() {});
-        },
-      ),
-    );
-    if (mounted) setState(() {});
+    if (showDialog) {
+      await showModalBottomSheet(
+        context: context,
+        useRootNavigator: false,
+        elevation: 0,
+        builder: (context) => CountryPickerDialog(
+          languageCode: widget.languageCode.toLowerCase(),
+          style: widget.pickerDialogStyle,
+          filteredCountries: filteredCountries,
+          searchText: widget.searchText,
+          countryList: _countryList,
+          selectedCountry: _selectedCountry,
+          onCountryChanged: (Country country) {
+            _selectedCountry = country;
+            widget.onCountryChanged?.call(country);
+            setState(() {});
+          },
+        ),
+      );
+      if (mounted) setState(() {});
+    }
   }
 
   @override
@@ -464,9 +468,11 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                 children: <Widget>[
                   if (widget.enabled &&
                       widget.showDropdownIcon &&
-                      widget.dropdownIconPosition == IconPosition.leading) ...[
+                      widget.dropdownIconPosition == IconPosition.leading &&
+                      showDialog) ...[
                     widget.dropdownIcon,
                   ],
+                  const SizedBox(width: 10),
                   Row(
                     children: [
                       Text(
@@ -478,12 +484,6 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                     ],
                   ),
                   const SizedBox(width: 8),
-                  if (widget.enabled &&
-                      widget.showDropdownIcon &&
-                      widget.dropdownIconPosition == IconPosition.trailing) ...[
-                    const SizedBox(width: 4),
-                    widget.dropdownIcon,
-                  ],
                   if (widget.showCountryFlag) ...[
                     Image.asset(
                       'assets/flags/${_selectedCountry.code.toLowerCase()}.png',
