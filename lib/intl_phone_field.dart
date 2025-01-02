@@ -362,21 +362,30 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
     if (showDialog) {
       await showModalBottomSheet(
         context: context,
-        useRootNavigator: false,
-        elevation: 0,
-        builder: (context) => CountryPickerDialog(
-          languageCode: widget.languageCode.toLowerCase(),
-          style: widget.pickerDialogStyle,
-          filteredCountries: filteredCountries,
-          searchText: widget.searchText,
-          countryList: _countryList,
-          selectedCountry: _selectedCountry,
-          onCountryChanged: (Country country) {
-            _selectedCountry = country;
-            widget.onCountryChanged?.call(country);
-            setState(() {});
-          },
-        ),
+        isScrollControlled: true,
+        builder: (context) {
+          return DraggableScrollableSheet(
+            maxChildSize: 0.8,
+            minChildSize: 0.4,
+            snap: true,
+            initialChildSize: 0.4,
+            expand: false,
+            builder: (context, controller) => CountryPickerDialog(
+              languageCode: widget.languageCode.toLowerCase(),
+              style: widget.pickerDialogStyle,
+              filteredCountries: filteredCountries,
+              searchText: widget.searchText,
+              countryList: _countryList,
+              selectedCountry: _selectedCountry,
+              onCountryChanged: (Country country) {
+                _selectedCountry = country;
+                widget.onCountryChanged?.call(country);
+                setState(() {});
+              },
+              scrollController: controller,
+            ),
+          );
+        },
       );
       if (mounted) setState(() {});
     }
