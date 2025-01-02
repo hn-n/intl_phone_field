@@ -320,15 +320,25 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
     number = widget.initialValue ?? '';
     if (widget.initialCountryCode == null && number.startsWith('+')) {
       number = number.substring(1);
-      // parse initial value
-      _selectedCountry = countries.firstWhere((country) => number.startsWith(country.fullCountryCode),
-          orElse: () => _countryList.first);
+
+      final index = _countryList.indexWhere((item) => item.code == (widget.initialCountryCode ?? 'US'));
+
+      if (index == -1) {
+        _selectedCountry = countries.where((element) => ['SA'].contains(element.code)).first;
+      } else {
+        _selectedCountry = _countryList[index];
+      }
 
       // remove country code from the initial number value
       number = number.replaceFirst(RegExp("^${_selectedCountry.fullCountryCode}"), "");
     } else {
-      _selectedCountry = _countryList.firstWhere((item) => item.code == (widget.initialCountryCode ?? 'US'),
-          orElse: () => _countryList.first);
+      final index = _countryList.indexWhere((item) => item.code == (widget.initialCountryCode ?? 'US'));
+
+      if (index == -1) {
+        _selectedCountry = countries.where((element) => ['SA'].contains(element.code)).first;
+      } else {
+        _selectedCountry = _countryList[index];
+      }
 
       // remove country code from the initial number value
       if (number.startsWith('+')) {
