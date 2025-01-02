@@ -88,7 +88,7 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 10),
+      // padding: const EdgeInsets.only(top: 10),
       child: Column(
         children: [
           Container(
@@ -135,13 +135,12 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      _filteredCountries[index].localizedName(widget.languageCode),
+                      _filteredCountries[index].localizedName(widget.languageCode) +
+                          " " +
+                          '[+${_filteredCountries[index].dialCode}]',
                       style: widget.style?.countryNameStyle ?? const TextStyle(fontSize: 14),
                     ),
                     Spacer(),
-                    Text(
-                      '[+${_filteredCountries[index].dialCode}]',
-                    ),
                     if (widget.showRadio)
                       Radio<Country>(
                         value: _filteredCountries[index],
