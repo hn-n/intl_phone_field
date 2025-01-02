@@ -135,12 +135,13 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      _filteredCountries[index].localizedName(widget.languageCode) +
-                          " " +
-                          '[+${_filteredCountries[index].dialCode}]',
+                      _filteredCountries[index].localizedName(widget.languageCode),
                       style: widget.style?.countryNameStyle ?? const TextStyle(fontSize: 14),
                     ),
                     Spacer(),
+                    Text(
+                      '[+${_filteredCountries[index].dialCode}]',
+                    ),
                     if (widget.showRadio)
                       Radio<Country>(
                         value: _filteredCountries[index],
