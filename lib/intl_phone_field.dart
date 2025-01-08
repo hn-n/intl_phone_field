@@ -374,26 +374,18 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
         context: context,
         isScrollControlled: true,
         builder: (context) {
-          return DraggableScrollableSheet(
-            maxChildSize: 0.8,
-            minChildSize: 0.4,
-            snap: true,
-            initialChildSize: 0.4,
-            expand: false,
-            builder: (context, controller) => CountryPickerDialog(
-              languageCode: widget.languageCode.toLowerCase(),
-              style: widget.pickerDialogStyle,
-              filteredCountries: filteredCountries,
-              searchText: widget.searchText,
-              countryList: _countryList,
-              selectedCountry: _selectedCountry,
-              onCountryChanged: (Country country) {
-                _selectedCountry = country;
-                widget.onCountryChanged?.call(country);
-                setState(() {});
-              },
-              scrollController: controller,
-            ),
+          return CountryPickerDialog(
+            languageCode: widget.languageCode.toLowerCase(),
+            style: widget.pickerDialogStyle,
+            filteredCountries: filteredCountries,
+            searchText: widget.searchText,
+            countryList: _countryList,
+            selectedCountry: _selectedCountry,
+            onCountryChanged: (Country country) {
+              _selectedCountry = country;
+              widget.onCountryChanged?.call(country);
+              setState(() {});
+            },
           );
         },
       );

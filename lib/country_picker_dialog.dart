@@ -49,7 +49,6 @@ class CountryPickerDialog extends StatefulWidget {
   final PickerDialogStyle? style;
   final String languageCode;
   final Color? dividerColor;
-  final ScrollController scrollController;
   final bool showRadio;
 
   const CountryPickerDialog({
@@ -62,7 +61,6 @@ class CountryPickerDialog extends StatefulWidget {
     required this.filteredCountries,
     this.style,
     this.dividerColor,
-    required this.scrollController,
     this.showRadio = true,
   }) : super(key: key);
 
@@ -87,94 +85,102 @@ class _CountryPickerDialogState extends State<CountryPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // padding: const EdgeInsets.only(top: 10),
-      child: Column(
-        children: [
-          Container(
-            width: 100,
-            height: 6,
-            margin: EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(3),
+    var keyboardSize = MediaQuery.of(context).viewInsets.bottom / MediaQuery.of(context).size.height;
+
+    return DraggableScrollableSheet(
+      maxChildSize: 0.8,
+      minChildSize: 0.4,
+      snap: true,
+      initialChildSize: 0.4 + keyboardSize,
+      expand: false,
+      builder: (context, controller) => Container(
+        child: Column(
+          children: [
+            Container(
+              width: 100,
+              height: 6,
+              margin: EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(3),
+              ),
             ),
-          ),
-          Padding(
-            padding: widget.style?.searchFieldPadding ?? const EdgeInsets.all(10),
-            child: TextField(
-              cursorColor: widget.style?.searchFieldCursorColor,
-              decoration: widget.style?.searchFieldInputDecoration ??
-                  InputDecoration(
-                    suffixIcon: const Icon(Icons.search),
-                    labelText: widget.searchText,
-                  ),
-              onChanged: (value) {
-                _filteredCountries = widget.countryList.stringSearch(value)
-                  ..sort(
-                    (a, b) => a.localizedName(widget.languageCode).compareTo(b.localizedName(widget.languageCode)),
-                  );
-                if (mounted) setState(() {});
-              },
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              controller: widget.scrollController,
-              itemCount: _filteredCountries.length,
-              itemBuilder: (ctx, index) => GestureDetector(
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  margin: const EdgeInsets.only(bottom: 1),
-                  child: Row(children: [
-                    Image.asset(
-                      'assets/flags/${_filteredCountries[index].code.toLowerCase()}.png',
-                      package: 'intl_phone_field',
-                      width: widget.style?.countryFlagSize ?? 20,
+            Container(
+              padding: widget.style?.searchFieldPadding ?? const EdgeInsets.all(10),
+              child: TextField(
+                cursorColor: widget.style?.searchFieldCursorColor,
+                decoration: widget.style?.searchFieldInputDecoration ??
+                    InputDecoration(
+                      suffixIcon: const Icon(Icons.search),
+                      labelText: widget.searchText,
                     ),
-                    const SizedBox(width: 10),
-                    Text(
-                      _filteredCountries[index].localizedName(widget.languageCode) +
-                          " " +
-                          '[+${_filteredCountries[index].dialCode}]',
-                      style: widget.style?.countryNameStyle ?? const TextStyle(fontSize: 14),
-                    ),
-                    Spacer(),
-                    if (widget.showRadio)
-                      Radio<Country>(
-                        value: _filteredCountries[index],
-                        groupValue: _selectedCountry,
-                        onChanged: (Country? value) {
-                          if (value != null) {
-                            setState(() {
-                              _selectedCountry = value;
-                            });
-                            widget.onCountryChanged(_selectedCountry);
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        activeColor: widget.style?.radioColor ?? Colors.purple,
-                        fillColor: WidgetStateProperty.resolveWith((states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return widget.style?.radioColor ?? Colors.purple;
-                          }
-                          return Colors.black26;
-                        }),
-                        visualDensity: VisualDensity.standard,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                  ]),
-                ),
-                onTap: () {
-                  _selectedCountry = _filteredCountries[index];
-                  widget.onCountryChanged(_selectedCountry);
-                  Navigator.of(context).pop();
+                onChanged: (value) {
+                  _filteredCountries = widget.countryList.stringSearch(value)
+                    ..sort(
+                      (a, b) => a.localizedName(widget.languageCode).compareTo(b.localizedName(widget.languageCode)),
+                    );
+                  if (mounted) setState(() {});
                 },
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: ListView.builder(
+                controller: controller,
+                itemCount: _filteredCountries.length,
+                itemBuilder: (ctx, index) => GestureDetector(
+                  child: Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    margin: const EdgeInsets.only(bottom: 1),
+                    child: Row(children: [
+                      Image.asset(
+                        'assets/flags/${_filteredCountries[index].code.toLowerCase()}.png',
+                        package: 'intl_phone_field',
+                        width: widget.style?.countryFlagSize ?? 20,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        _filteredCountries[index].localizedName(widget.languageCode) +
+                            " " +
+                            '[+${_filteredCountries[index].dialCode}]',
+                        style: widget.style?.countryNameStyle ?? const TextStyle(fontSize: 14),
+                      ),
+                      Spacer(),
+                      if (widget.showRadio)
+                        Radio<Country>(
+                          value: _filteredCountries[index],
+                          groupValue: _selectedCountry,
+                          onChanged: (Country? value) {
+                            if (value != null) {
+                              setState(() {
+                                _selectedCountry = value;
+                              });
+                              widget.onCountryChanged(_selectedCountry);
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          activeColor: widget.style?.radioColor ?? Colors.purple,
+                          fillColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return widget.style?.radioColor ?? Colors.purple;
+                            }
+                            return Colors.black26;
+                          }),
+                          visualDensity: VisualDensity.standard,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                    ]),
+                  ),
+                  onTap: () {
+                    _selectedCountry = _filteredCountries[index];
+                    widget.onCountryChanged(_selectedCountry);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
