@@ -503,7 +503,6 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                     ),
                     const SizedBox(width: 10),
                   ],
-                  const SizedBox(width: 10),
                 ],
               ),
             ),
