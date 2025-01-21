@@ -491,7 +491,10 @@ class _IntlPhoneFieldState extends State<IntlPhoneField> {
                         style: widget.dropdownTextStyle,
                         textAlign: TextAlign.left,
                       ),
-                      const Text("+"),
+                      Text(
+                        "+",
+                        style: widget.dropdownTextStyle,
+                      ),
                     ],
                   ),
                   const SizedBox(width: 8),
